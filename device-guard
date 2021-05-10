@@ -1,0 +1,39 @@
+#!/bin/sh
+set +e
+
+case "$1" in
+
+    block)
+
+    cat << EOF | iptables-restore
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT DROP [0:0]
+-A OUTPUT -d 127.0.0.1/32 -j ACCEPT
+-A OUTPUT -d 192.168.122.57/32 -j ACCEPT
+COMMIT
+EOF
+
+    cat << EOF | ip6tables-restore
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT DROP [25:2273]
+COMMIT
+EOF
+    ;;
+    
+    unblock)
+    
+    cat << EOF | iptables-restore
+*filter
+COMMIT
+EOF
+    
+    cat << EOF | ip6tables-restore
+*filter
+COMMIT
+EOF
+    ;;
+esac
